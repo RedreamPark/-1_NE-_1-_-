@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공통영어1 · Lesson 1 어법 선택형 퀴즈 (민병천)</title>
+<style>
+  :root {
+    --green: #1D9E75; --green-dark: #0F6E56; --green-light: #E1F5EE; --green-deep: #085041;
+    --red: #A32D2D; --red-light: #FCEBEB; --red-deep: #501313;
+    --amber: #BA7517; --amber-light: #FAEEDA; --amber-deep: #633806;
+    --blue: #185FA5; --blue-light: #E6F1FB;
+    --bg: #F6F4F0; --card: #FFFFFF; --border: rgba(0,0,0,0.09);
+    --text: #1a1a1a; --muted: #666; --hint: #999;
+    --r: 12px; --rs: 8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  #app{max-width:680px;margin:0 auto;padding:24px 16px 60px;}
+
+  /* INTRO */
+  .intro-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:2.5rem 2rem;text-align:center;margin-top:16px;}
+  .intro-logo{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--green);text-transform:uppercase;margin-bottom:20px;}
+  .intro-title{font-size:26px;font-weight:800;line-height:1.3;margin-bottom:6px;}
+  .intro-sub{font-size:14px;color:var(--muted);margin-bottom:28px;}
+  .info-row{display:flex;gap:12px;justify-content:center;margin-bottom:24px;flex-wrap:wrap;}
+  .info-card{background:var(--bg);border-radius:var(--rs);padding:14px 20px;min-width:90px;}
+  .info-num{font-size:24px;font-weight:800;color:var(--green);}
+  .info-lbl{font-size:11px;color:var(--muted);margin-top:3px;}
+  .intro-note{background:var(--blue-light);border-radius:var(--rs);padding:12px 16px;font-size:13px;color:var(--blue);margin-bottom:28px;line-height:1.7;text-align:left;}
+  .start-btn{width:100%;padding:16px;font-size:16px;font-weight:800;font-family:inherit;background:var(--green);color:#fff;border:none;border-radius:var(--r);cursor:pointer;transition:background .15s,transform .1s;}
+  .start-btn:hover{background:var(--green-dark);}
+  .start-btn:active{transform:scale(.98);}
+
+  /* HEADER */
+  .progress-wrap{height:5px;background:#DDD;border-radius:99px;overflow:hidden;margin-bottom:12px;}
+  .progress-fill{height:5px;background:var(--green);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+  .timer-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .quiz-counter{font-size:13px;font-weight:700;color:var(--muted);}
+  .cutline-chip{font-size:12px;font-weight:700;color:var(--green-deep);background:var(--green-light);padding:3px 10px;border-radius:99px;}
+  .timer-block{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .timer-lbl{font-size:10px;color:var(--hint);text-transform:uppercase;letter-spacing:.05em;}
+  .timer-ring{position:relative;width:52px;height:52px;}
+  .timer-ring svg{transform:rotate(-90deg);}
+  .timer-ring circle{fill:none;stroke-width:4;}
+  .ring-bg{stroke:#E0E0E0;}
+  .ring-fill{stroke:var(--green);stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .4s;}
+  .timer-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--text);transition:color .3s;}
+  .tw .ring-fill{stroke:var(--amber);} .tw .timer-num{color:var(--amber);}
+  .td .ring-fill{stroke:var(--red);} .td .timer-num{color:var(--red);}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .td .timer-ring{animation:pulse .8s infinite;}
+
+  /* CARD */
+  .q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:14px;animation:fadeUp .22s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .q-num{font-size:11px;color:var(--hint);margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase;}
+  .q-ko{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:10px;}
+  .q-en{font-size:16px;line-height:2.1;margin-bottom:18px;color:var(--text);}
+  .blank-tag{font-weight:800;font-size:14px;color:var(--blue);background:var(--blue-light);padding:2px 8px;border-radius:5px;margin:0 2px;}
+  .blank-section{margin-bottom:14px;}
+  .blank-label{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+  .choices{display:flex;gap:10px;flex-wrap:wrap;}
+  .choice-btn{flex:1;min-width:110px;padding:12px 14px;font-size:15px;font-family:inherit;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--card);color:var(--text);cursor:pointer;text-align:center;font-weight:600;transition:all .12s;}
+  .choice-btn:hover:not(:disabled){border-color:var(--green);background:var(--green-light);color:var(--green-deep);}
+  .choice-btn.correct{background:var(--green-light);border-color:var(--green);color:var(--green-deep);font-weight:800;}
+  .choice-btn.wrong{background:var(--red-light);border-color:var(--red);color:var(--red-deep);}
+  .choice-btn:disabled{cursor:default;}
+  .timeout-msg{margin-top:10px;padding:10px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;background:var(--amber-light);color:var(--amber-deep);border:1px solid #FAC775;}
+
+  /* RESULT */
+  .result-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:32px 24px;text-align:center;margin-bottom:16px;}
+  .result-emoji{font-size:44px;margin-bottom:12px;}
+  .result-score{font-size:56px;font-weight:800;line-height:1;margin-bottom:8px;}
+  .score-pass{color:var(--green);} .score-fail{color:var(--red);}
+  .result-badge{display:inline-block;padding:5px 18px;border-radius:99px;font-size:14px;font-weight:800;margin-bottom:8px;}
+  .badge-pass{background:var(--green-light);color:var(--green-deep);}
+  .badge-fail{background:var(--red-light);color:var(--red-deep);}
+  .result-pct{font-size:13px;color:var(--muted);margin-bottom:22px;}
+  .stat-row{display:flex;gap:10px;justify-content:center;margin-bottom:26px;flex-wrap:wrap;}
+  .stat-card{background:var(--bg);border-radius:var(--rs);padding:12px 18px;}
+  .stat-num{font-size:22px;font-weight:800;}
+  .stat-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+  .s-ok{color:var(--green);} .s-ng{color:var(--red);} .s-to{color:var(--amber);}
+  .retry-btn{width:100%;padding:15px;font-size:15px;font-weight:800;font-family:inherit;background:var(--green);color:#fff;border:none;border-radius:var(--r);cursor:pointer;transition:background .15s,transform .1s;}
+  .retry-btn:hover{background:var(--green-dark);}
+  .retry-btn:active{transform:scale(.98);}
+  .review-title{font-size:14px;font-weight:800;color:var(--text);margin-bottom:10px;margin-top:16px;}
+  .review-item{background:var(--card);border:1px solid #F09595;border-radius:var(--rs);padding:14px 16px;margin-bottom:8px;}
+  .review-item.to{border-color:#FAC775;}
+  .r-num{font-size:11px;color:var(--hint);margin-bottom:4px;}
+  .r-ko{font-size:13px;color:var(--muted);margin-bottom:4px;line-height:1.6;}
+  .r-en{font-size:13px;color:var(--text);margin-bottom:8px;line-height:1.7;}
+  .tag{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;margin-right:4px;margin-top:2px;}
+  .tag-ng{background:var(--red-light);color:var(--red-deep);}
+  .tag-ok{background:var(--green-light);color:var(--green-deep);}
+  .tag-to{background:var(--amber-light);color:var(--amber-deep);}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const ALL_Q = [
+  {n:1, ko:"당신은 갑자기 화가 나는 경우가 있는가?", en:"Do you ever find [A] suddenly [B] angry?", blanks:[{label:"[A]",choices:["you","yourself"],answer:"yourself"},{label:"[B]",choices:["feeling","felt"],answer:"feeling"}]},
+  {n:2, ko:"한 순간 당신은 괜찮다가 다음 순간에 문을 꽝 닫거나 부모님께 눈을 치켜뜬다.", en:"One moment you're fine, and the next moment you're [A] doors or [B] your eyes at your parents.", blanks:[{label:"[A]",choices:["slamming","slam"],answer:"slamming"},{label:"[B]",choices:["to roll","rolling"],answer:"rolling"}]},
+  {n:3, ko:"어떤 사람들은 당신이 그저 태도가 나쁘거나 작은 문제에 너무 화를 낸다고 생각할지도 모른다.", en:"Some people may think you just [A] a bad attitude or [B] getting too upset about a small problem.", blanks:[{label:"[A]",choices:["has","have"],answer:"have"},{label:"[B]",choices:["are","is"],answer:"are"}]},
+  {n:4, ko:"그러나 이러한 감정들은 단순히 일상생활에 대한 스트레스에서 오는 것이 아니다.", en:"However, these feelings [A] simply come from stress about everyday life.", blanks:[{label:"[A]",choices:["doesn't","don't"],answer:"don't"}]},
+  {n:5, ko:"십 대로서, 당신은 어른인 것처럼 느낄지도 모르지만 당신의 뇌는 여전히 자라고 있다.", en:"Where [A] adolescent anger come from? As a teen, you may [B] an adult, but your brain is still [C].", blanks:[{label:"[A]",choices:["do","does"],answer:"does"},{label:"[B]",choices:["feel","feel like"],answer:"feel like"},{label:"[C]",choices:["grown","growing"],answer:"growing"}]},
+  {n:6, ko:"당신의 뇌에는 문제 해결과 감정 조절을 담당하는 부분이 있다.", en:"In your brain, there [A] a part that [B] responsible for solving problems and [C] your emotions.", blanks:[{label:"[A]",choices:["is","are"],answer:"is"},{label:"[B]",choices:["are","is"],answer:"is"},{label:"[C]",choices:["to control","controlling"],answer:"controlling"}]},
+  {n:7, ko:"당신의 십 대 시절에 이 부분은 여전히 발달하고 있다.", en:"In your teen years, this part [A] still in development.", blanks:[{label:"[A]",choices:["are","is"],answer:"is"}]},
+  {n:8, ko:"당신의 뇌의 변화는 당신을 독립성, 사회적 참여, 그리고 창의성으로 이끈다.", en:"The changes in your brain [A] you toward independence, social engagement, and creativity.", blanks:[{label:"[A]",choices:["lead","leads"],answer:"lead"}]},
+  {n:9, ko:"그러나 동시에 당신은 당신이 누구인지에 대해 혼란스럽게 느낄지도 모른다.", en:"At the same time, however, you may feel [A] about who you [B].", blanks:[{label:"[A]",choices:["confused","confusing"],answer:"confused"},{label:"[B]",choices:["are","do"],answer:"are"}]},
+  {n:10, ko:"당신은 또한 불공정에 더욱 민감할 수도 있다.", en:"You may also be more [A] to unfairness.", blanks:[{label:"[A]",choices:["sensitive","sensitively"],answer:"sensitive"}]},
+  {n:11, ko:"게다가 당신의 신체는 호르몬으로 넘쳐나고 있다.", en:"Furthermore, your body is [A] with hormones.", blanks:[{label:"[A]",choices:["flow","flowing"],answer:"flowing"}]},
+  {n:12, ko:"이것은 당신의 기분에 상당히 영향을 미친다.", en:"This significantly [A] your mood.", blanks:[{label:"[A]",choices:["affect","affects"],answer:"affects"}]},
+  {n:13, ko:"이러한 요소들의 조합은 당신의 강한 감정을 강화한다.", en:"The combination of [A] factors [B] your strong emotions.", blanks:[{label:"[A]",choices:["this","these"],answer:"these"},{label:"[B]",choices:["intensifies","intensify"],answer:"intensifies"}]},
+  {n:14, ko:"때때로 화가 나는 것은 자연스러우며 그것은 당신에게 문제가 있다는 것을 뜻하지 않는다.", en:"Getting [A] Your Anger. It is [B] to feel [C] from time to time; it doesn't mean there [D] something wrong with you.", blanks:[{label:"[A]",choices:["to Be Known","to Know"],answer:"to Know"},{label:"[B]",choices:["natural","naturally"],answer:"natural"},{label:"[C]",choices:["angrily","angry"],answer:"angry"},{label:"[D]",choices:["are","is"],answer:"is"}]},
+  {n:15, ko:"화는 가끔 쓸모 있는 도구가 될 수 있다.", en:"Anger can sometimes [A] a useful tool.", blanks:[{label:"[A]",choices:["is","be"],answer:"be"}]},
+  {n:16, ko:"예를 들어, 격앙되지만 진솔한 대화는 친구들 사이의 갈등을 해결할 수 있다.", en:"For example, an angry but open conversation can [A] a conflict between friends.", blanks:[{label:"[A]",choices:["be resolved","resolve"],answer:"resolve"}]},
+  {n:17, ko:"중요한 것은 당신의 화가 공격적이거나 폭력적인 행동으로 변하지 않도록 조절하는 것이다.", en:"The important thing is [A] your anger so that [B] does not turn into aggressive or violent behavior.", blanks:[{label:"[A]",choices:["to manage","managed"],answer:"to manage"},{label:"[B]",choices:["they","it"],answer:"it"}]},
+  {n:18, ko:"이는 당신이 화를 내지 말아야 한다는 것을 의미하지 않는다.", en:"This does not mean that you should stop [A] [B] feeling [C].", blanks:[{label:"[A]",choices:["you","yourself"],answer:"yourself"},{label:"[B]",choices:["from","of"],answer:"from"},{label:"[C]",choices:["angrily","angry"],answer:"angry"}]},
+  {n:19, ko:"오히려 당신은 화를 생산적인 방식으로 표현해야 한다.", en:"Rather, you should [A] it in a productive way.", blanks:[{label:"[A]",choices:["be expressed","express"],answer:"express"}]},
+  {n:20, ko:"당신의 성난 감정에 대해 스스로에게 몇 가지 질문을 해 봐라.", en:"[A] yourself some questions about your angry feelings.", blanks:[{label:"[A]",choices:["Ask","Asking"],answer:"Ask"}]},
+  {n:21, ko:"이는 당신의 화를 더 잘 이해하는 데 도움이 될 수 있다.", en:"This can help you to better [A] your anger.", blanks:[{label:"[A]",choices:["understanding","understand"],answer:"understand"}]},
+  {n:22, ko:"나는 얼마나 자주 화가 나는가?", en:"Questions [A] Yourself. How often do I [B] angry?", blanks:[{label:"[A]",choices:["to Ask","to Be Asked"],answer:"to Ask"},{label:"[B]",choices:["felt","feel"],answer:"feel"}]},
+  {n:23, ko:"어떤 상황이 나에게 가장 극심한 화를 느끼게 하는가?", en:"What situations [A] me [B] the most intense anger?", blanks:[{label:"[A]",choices:["make","makes"],answer:"make"},{label:"[B]",choices:["feel","to feel"],answer:"feel"}]},
+  {n:24, ko:"나의 화는 특히 어떤 사람 혹은 어떤 것을 향해 있는가?", en:"Is my anger [A] at anyone or anything in particular?", blanks:[{label:"[A]",choices:["directing","directed"],answer:"directed"}]},
+  {n:25, ko:"나는 해결책보다는 내 화의 원인에 초점을 두는가?", en:"Do I focus on the causes of my [A] instead of solutions?", blanks:[{label:"[A]",choices:["angry","anger"],answer:"anger"}]},
+  {n:26, ko:"화가 날 때 나는 내 감정을 조절할 수 있는가?", en:"Can I [A] my emotions when I get [B]?", blanks:[{label:"[A]",choices:["control","be controlled"],answer:"control"},{label:"[B]",choices:["angrily","angry"],answer:"angry"}]},
+  {n:27, ko:"화가 날 때 나는 어떻게 반응하고 행동하는가?", en:"How do I react and [A] when I get angry?", blanks:[{label:"[A]",choices:["behave","behaved"],answer:"behave"}]},
+  {n:28, ko:"당신은 사회적으로 적절한 방식으로 화를 다스리는 방법을 배워야 한다.", en:"First Aid to [A]. You need [B] how to [C] with anger in a [D] appropriate way.", blanks:[{label:"[A]",choices:["Calm Yourself Down","Calm Down Yourself"],answer:"Calm Yourself Down"},{label:"[B]",choices:["to learn","learning"],answer:"to learn"},{label:"[C]",choices:["dealing","deal"],answer:"deal"},{label:"[D]",choices:["socially","social"],answer:"socially"}]},
+  {n:29, ko:"기억하라. 화는 감정이지만 행동은 선택이다.", en:"[A]: anger is a feeling, but behavior is a choice.", blanks:[{label:"[A]",choices:["Remembering","Remember"],answer:"Remember"}]},
+  {n:30, ko:"첫 번째 단계는 화의 신체적 징후를 알아차리는 것이다.", en:"The first step is [A] the physical signs of anger.", blanks:[{label:"[A]",choices:["recognizing","recognized"],answer:"recognizing"}]},
+  {n:31, ko:"그러한 징후를 미리 알아차리는 것은 가능하다.", en:"It is [A] to recognize [B] signs in advance.", blanks:[{label:"[A]",choices:["possible","possibly"],answer:"possible"},{label:"[B]",choices:["that","those"],answer:"those"}]},
+  {n:32, ko:"그것들은 증가한 심박수, 빨개진 얼굴, 그리고 주먹을 꽉 쥐는 것을 포함한다.", en:"[A] include an increased heart rate, a flushed face, and the [B] of your fists.", blanks:[{label:"[A]",choices:["It","They"],answer:"They"},{label:"[B]",choices:["clenched","clenching"],answer:"clenching"}]},
+  {n:33, ko:"이러한 것들이 발생할 때 당신의 화를 줄이기 위해 조치를 취해라.", en:"When these things [A], [B] action to [C] your anger.", blanks:[{label:"[A]",choices:["happen","happens"],answer:"happen"},{label:"[B]",choices:["taking","take"],answer:"take"},{label:"[C]",choices:["reduce","be reduced"],answer:"reduce"}]},
+  {n:34, ko:"예를 들어, 당신의 생각을 정리하기 위해 휴식을 취하거나 대화가 너무 격해지기 전에 중단하는 것을 시도해 볼 수 있다.", en:"For example, you could try taking a break to organize your thoughts or [A] a conversation before [B] gets too intense.", blanks:[{label:"[A]",choices:["ending","to end"],answer:"ending"},{label:"[B]",choices:["it","they"],answer:"it"}]},
+  {n:35, ko:"어떤 경우에는 위에 언급한 전략이 충분하지 않을 수 있으므로 적절한 대처 기술을 찾아야 할지도 모른다.", en:"In some cases, the strategies [A] above may not be enough, so you may need [B] proper coping skills for your personal situation.", blanks:[{label:"[A]",choices:["mentioned","mentioning"],answer:"mentioned"},{label:"[B]",choices:["finding","to find"],answer:"to find"}]},
+  {n:36, ko:"올바른 대처 기술이 없다면 당신은 스스로가 언어적으로 혹은 심지어 신체적으로 공격적이 되는 것을 발견할지도 모른다.", en:"Without the right coping skills, you may [A] yourself [B] [C] or even physically aggressive.", blanks:[{label:"[A]",choices:["find","be found"],answer:"find"},{label:"[B]",choices:["to become","becoming"],answer:"becoming"},{label:"[C]",choices:["verbally","verbal"],answer:"verbally"}]},
+  {n:37, ko:"무엇이 당신에게 가장 좋은지 찾기 위해 다양한 전략을 탐구해라.", en:"Explore various strategies [A] what [B] best for you, such as taking a walk, [C] a picture, or [D] down things that [E] to your mind.", blanks:[{label:"[A]",choices:["to discover","discover"],answer:"to discover"},{label:"[B]",choices:["are","is"],answer:"is"},{label:"[C]",choices:["drawing","to draw"],answer:"drawing"},{label:"[D]",choices:["writing","to write"],answer:"writing"},{label:"[E]",choices:["comes","come"],answer:"come"}]},
+  {n:38, ko:"당신은 또한 문제에 대한 가능한 해결책들을 찾고 각각의 장점과 단점을 비교하려고 노력할 수 있다.", en:"You can also try to find possible solutions to a problem and then [A] the advantages and disadvantages of each one.", blanks:[{label:"[A]",choices:["compare","compares"],answer:"compare"}]},
+  {n:39, ko:"문제 해결 능력을 발전시킴으로써 당신은 화를 내지 않고 문제를 해결할 많은 방법이 있다는 것을 배울 것이다.", en:"By [A] problem-solving skills, you will learn [B] there [C] many ways [D] a problem without [E] angry.", blanks:[{label:"[A]",choices:["developed","developing"],answer:"developing"},{label:"[B]",choices:["what","that"],answer:"that"},{label:"[C]",choices:["is","are"],answer:"are"},{label:"[D]",choices:["solving","to solve"],answer:"to solve"},{label:"[E]",choices:["getting","get"],answer:"getting"}]},
+  {n:40, ko:"화는 우리 모두가 겪는 감정이다.", en:"Anger is an emotion [A] we all experience.", blanks:[{label:"[A]",choices:["that","what"],answer:"that"}]},
+  {n:41, ko:"화를 적절하게 다룸으로써 당신은 감정의 주도권을 가질 수 있다.", en:"By managing your anger [A], you can be the boss of your feelings, not the other way around.", blanks:[{label:"[A]",choices:["properly","proper"],answer:"properly"}]},
+  {n:42, ko:"이것은 진정한 자아를 찾고 당신의 삶을 장악하는 데 있어 중요한 단계이다.", en:"This is an important step in [A] your true self and [B] control of your life.", blanks:[{label:"[A]",choices:["find","finding"],answer:"finding"},{label:"[B]",choices:["to take","taking"],answer:"taking"}]},
+];
+
+const TOTAL=20, CUTLINE=18, TIME_LIMIT=5;
+const CIRCUM=2*Math.PI*20;
+
+let questions=[], idx=0, answers={}, timeouts={}, screen='intro';
+let timerSec=TIME_LIMIT, timerInterval=null;
+
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function start(){
+  questions=shuffle(ALL_Q).slice(0,TOTAL);
+  idx=0; answers={}; timeouts={}; screen='quiz';
+  startTimer(); render();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerSec=TIME_LIMIT;
+  timerInterval=setInterval(()=>{
+    timerSec--;
+    updateTimerUI();
+    if(timerSec<=0) onTimeout();
+  },1000);
+}
+
+function updateTimerUI(){
+  const ring=document.querySelector('.ring-fill');
+  const num=document.querySelector('.timer-num');
+  const wrap=document.querySelector('.timer-inner');
+  if(!ring||!num) return;
+  ring.style.strokeDashoffset=CIRCUM*(1-(timerSec/TIME_LIMIT));
+  num.textContent=timerSec;
+  if(wrap) wrap.className='timer-inner'+(timerSec<=1?' td':timerSec<=2?' tw':'');
+}
+
+function onTimeout(){
+  clearInterval(timerInterval);
+  timeouts[idx]=true;
+  answers[idx]='__timeout__';
+  render();
+  setTimeout(()=>advance(),1200);
+}
+
+function advance(){
+  if(idx<TOTAL-1){idx++;startTimer();render();}
+  else{clearInterval(timerInterval);screen='result';render();}
+}
+
+function isCorrect(q,qi){
+  if(!answers[qi]||answers[qi]==='__timeout__') return false;
+  return q.blanks.every((_,bi)=>answers[`${qi}_${bi}`]===q.blanks[bi].answer);
+}
+
+function scoreQ(){
+  return questions.reduce((c,q,qi)=>isCorrect(q,qi)?c+1:c,0);
+}
+
+function render(){
+  const app=document.getElementById('app');
+  if(screen==='intro') app.innerHTML=renderIntro();
+  else if(screen==='quiz') app.innerHTML=renderQuiz();
+  else app.innerHTML=renderResult();
+  attachEvents();
+}
+
+function renderIntro(){
+  return `<div class="intro-box">
+  <div class="intro-logo">NE능률(민병천) · 공통영어1</div>
+  <div class="intro-title">Lesson 1<br>어법 선택형 연습</div>
+  <div class="intro-sub">청소년의 화 | Adolescent Anger</div>
+  <div class="info-row">
+    <div class="info-card"><div class="info-num">${TOTAL}</div><div class="info-lbl">랜덤 문항</div></div>
+    <div class="info-card"><div class="info-num">${CUTLINE}개</div><div class="info-lbl">합격 커트라인</div></div>
+    <div class="info-card"><div class="info-num">5초</div><div class="info-lbl">문항당 제한</div></div>
+    <div class="info-card"><div class="info-num">42</div><div class="info-lbl">전체 문항 풀</div></div>
+  </div>
+  <div class="intro-note">⏱ 문제당 <strong>5초</strong> 제한이 있습니다.<br>답을 선택하면 즉시 채점 후 다음 문제로 넘어갑니다.<br>빈칸이 여러 개인 문항은 하나씩 순서대로 풀어요.</div>
+  <button class="start-btn" id="start-btn">시작하기</button>
+</div>`;
+}
+
+function renderQuiz(){
+  const q=questions[idx];
+  const pct=Math.round((idx/TOTAL)*100);
+  const offset=CIRCUM*(1-(timerSec/TIME_LIMIT));
+  const twCls=timerSec<=1?'td':timerSec<=2?'tw':'';
+  const isTO=timeouts[idx];
+
+  let enHtml=q.en;
+  q.blanks.forEach(b=>{enHtml=enHtml.replace(b.label,`<span class="blank-tag">${b.label}</span>`);});
+
+  const currentBi=q.blanks.findIndex((_,bi)=>answers[`${idx}_${bi}`]===undefined);
+  const b=currentBi>=0?q.blanks[currentBi]:null;
+
+  let bodyHtml='';
+  if(isTO){
+    bodyHtml=`<div class="timeout-msg">⏰ 시간 초과! &nbsp;정답: <strong>${q.blanks.map(b=>b.answer).join(' / ')}</strong></div>`;
+  } else if(b){
+    bodyHtml=`<div class="blank-section">
+      <div class="blank-label">${b.label} 중 알맞은 것을 고르세요</div>
+      <div class="choices">${b.choices.map(c=>`<button class="choice-btn" data-bi="${currentBi}" data-choice="${c}">${c}</button>`).join('')}</div>
+    </div>`;
+  }
+
+  return `<div style="margin-bottom:10px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+    <div class="quiz-counter">문항 ${idx+1} / ${TOTAL}</div>
+    <div class="cutline-chip">커트라인 ${CUTLINE}개</div>
+  </div>
+  <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
+</div>
+<div class="timer-row">
+  <div style="font-size:13px;color:var(--muted);">NE능률(민병천) · Lesson 1</div>
+  <div class="timer-block">
+    <div class="timer-lbl">남은시간</div>
+    <div class="timer-inner ${twCls}">
+      <div class="timer-ring">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle class="ring-bg" cx="26" cy="26" r="20"/>
+          <circle class="ring-fill" cx="26" cy="26" r="20" stroke-dasharray="${CIRCUM}" stroke-dashoffset="${offset}"/>
+        </svg>
+        <div class="timer-num">${timerSec}</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="q-card">
+  <div class="q-num">원문 ${q.n}번</div>
+  <div class="q-ko">${q.ko}</div>
+  <div class="q-en">${enHtml}</div>
+  ${bodyHtml}
+</div>`;
+}
+
+function renderResult(){
+  const correct=scoreQ();
+  const toCount=Object.keys(timeouts).length;
+  const pass=correct>=CUTLINE;
+  const pct=Math.round((correct/TOTAL)*100);
+  const emoji=pass?(correct===TOTAL?'🎉':'👍'):(correct>=15?'💪':'📚');
+  const wrongIdxs=questions.map((_,qi)=>qi).filter(qi=>!isCorrect(questions[qi],qi));
+
+  return `<div class="result-card">
+  <div class="result-emoji">${emoji}</div>
+  <div class="result-score ${pass?'score-pass':'score-fail'}">${correct} / ${TOTAL}</div>
+  <div class="result-badge ${pass?'badge-pass':'badge-fail'}">${pass?'합격 ✓':'불합격 ✗'} · 커트라인 ${CUTLINE}개</div>
+  <div class="result-pct">정답률 ${pct}%</div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-num s-ok">${correct}</div><div class="stat-lbl">정답</div></div>
+    <div class="stat-card"><div class="stat-num s-ng">${TOTAL-correct-toCount}</div><div class="stat-lbl">오답</div></div>
+    <div class="stat-card"><div class="stat-num s-to">${toCount}</div><div class="stat-lbl">시간초과</div></div>
+  </div>
+  <button class="retry-btn" id="retry-btn">다시 풀기 (새 랜덤 20문항)</button>
+</div>
+${wrongIdxs.length>0?`
+<div class="review-title">오답 목록 (${wrongIdxs.length}개)</div>
+${wrongIdxs.map(qi=>{
+  const q=questions[qi];
+  const isTO=timeouts[qi];
+  const wBlanks=q.blanks.filter((b,bi)=>answers[`${qi}_${bi}`]!==b.answer);
+  return `<div class="review-item ${isTO?'to':''}">
+    <div class="r-num">원문 ${q.n}번${isTO?' ⏰ 시간초과':''}</div>
+    <div class="r-ko">${q.ko}</div>
+    <div class="r-en">${q.en}</div>
+    <div>${wBlanks.map(b=>{
+      const sel=answers[`${qi}_${q.blanks.indexOf(b)}`];
+      const isT=sel==='__timeout__'||!sel;
+      return `<span class="tag ${isT?'tag-to':'tag-ng'}">${b.label} ${isT?'시간초과':'선택: '+sel}</span><span class="tag tag-ok">정답: ${b.answer}</span>`;
+    }).join('')}</div>
+  </div>`;}).join('')}`
+:`<div style="text-align:center;color:var(--green);font-weight:800;padding:20px;font-size:15px;">전 문항 정답! 완벽합니다 🎉</div>`}`;
+}
+
+function attachEvents(){
+  const app=document.getElementById('app');
+  const s=app.querySelector('#start-btn'); if(s) s.addEventListener('click',start);
+  const r=app.querySelector('#retry-btn'); if(r) r.addEventListener('click',start);
+
+  app.querySelectorAll('.choice-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    const bi=parseInt(btn.dataset.bi), choice=btn.dataset.choice;
+    const q=questions[idx], key=`${idx}_${bi}`;
+    if(answers[key]!==undefined) return;
+    answers[key]=choice;
+    answers[idx]=choice;
+    const correct=q.blanks[bi].answer;
+    const isOk=choice===correct;
+    btn.classList.add(isOk?'correct':'wrong');
+    btn.parentElement.querySelectorAll('.choice-btn').forEach(b2=>{
+      b2.disabled=true;
+      if(!isOk&&b2.dataset.choice===correct) b2.classList.add('correct');
+    });
+    const nextBi=q.blanks.findIndex((_,i)=>answers[`${idx}_${i}`]===undefined);
+    setTimeout(()=>{
+      if(nextBi>=0){clearInterval(timerInterval);timerSec=TIME_LIMIT;startTimer();render();}
+      else advance();
+    },isOk?400:800);
+  }));
+}
+
+render();
+</script>
+</body>
+</html>
